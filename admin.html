@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FF Admin Panel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body{font-family:sans-serif;background:#111;color:#fff;padding:20px}
+input,button{width:100%;padding:10px;margin:6px 0;border-radius:5px;border:none}
+button{background:#ff5722;color:white;font-size:16px}
+.card{background:#222;padding:10px;margin-top:10px;border-radius:8px}
+.delete{background:red}
+</style>
+</head>
+<body>
+
+<h2>🔥 Free Fire Admin Panel</h2>
+
+<input id="title" placeholder="Match Title">
+<input id="fee" placeholder="Entry Fee">
+<input id="slots" placeholder="Total Slots">
+<button onclick="addMatch()">➕ Add Match</button>
+
+<div id="matches"></div>
+
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyDg1CA3UFtTeE06EXVBoQF0-d_LLWlRrck",
+  authDomain: "live-gf--bf.firebaseapp.com",
+  databaseURL: "https://live-gf--bf-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "live-gf--bf"
+});
+
+const db = firebase.database().ref("matches");
+
+function addMatch(){
+ let id = Date.now();
+ db.child(id).set({
+   title: title.value,
+   fee: fee.value,
+   slots: slots.value
+ });
+ title.value=""; fee.value=""; slots.value="";
+}
+
+db.on("value", snap=>{
+ let html="";
+ snap.forEach(d=>{
+   let m=d.val();
+   html+=`
+   <div class="card">
+     <h3>${m.title}</h3>
+     💰 Fee: ${m.fee}<br>
+     👥 Slots: ${m.slots}<br>
+     <button class="delete" onclick="db.child('${d.key}').remove()">Delete</button>
+   </div>`;
+ });
+ document.getElementById("matches").innerHTML=html;
+});
+</script>
+</body>
+</html>
